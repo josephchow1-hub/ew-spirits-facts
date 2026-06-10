@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#11385f">
+<title>Spirits Facts · Everything Wine Staff Tool</title>
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Spirits+Facts%22%2C%22short_name%22%3A%22Spirits%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23EFE7D8%22%2C%22theme_color%22%3A%22%2311385f%22%7D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF7EF;--page:#EFE7D8;--ink:#2A2320;--ink-soft:#7A6F64;--ink-faint:#B6A998;
+    --line:#E6DCCB;--line-strong:#D8CCB6;--wine:#11385f;--wine-dark:#0b2a47;--wine-tint:#E0EAF3;
+    --gold:#C49A4A;--gold-light:#FBF3E2;--sans:'Hanken Grotesk',system-ui,sans-serif;--serif:'Marcellus',Georgia,serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--sans);
+    background:radial-gradient(120% 80% at 50% -10%,#F6EFE2 0%,var(--page) 60%) fixed;
+    color:var(--ink);min-height:100vh;display:flex;justify-content:center;
+    padding:32px 16px 40px;-webkit-font-smoothing:antialiased;
+  }
+  .screen{
+    background:var(--paper);border-radius:18px;border:1px solid var(--line-strong);
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset,0 18px 50px -24px rgba(60,30,20,0.45);
+    overflow:hidden;width:100%;max-width:452px;align-self:flex-start;
+  }
+  .masthead{padding:22px 22px 18px;border-bottom:1px solid var(--line);position:relative;}
+  .masthead::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;
+    background:linear-gradient(90deg,var(--wine) 0%,var(--wine) 60%,var(--gold) 60%,var(--gold) 100%);opacity:0.9;}
+  .brand-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .brand-mark{width:30px;height:30px;border-radius:50%;background:var(--wine);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .brand-mark span{font-family:var(--serif);color:#F6E3C8;font-size:15px;line-height:1;}
+  .brand-over{font-size:10.5px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--wine);}
+  .brand-sub{font-size:11px;color:var(--ink-soft);letter-spacing:0.04em;margin-top:1px;}
+  .masthead h1{font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.05;color:var(--wine);letter-spacing:0.01em;}
+  .masthead .tagline{font-size:12.5px;color:var(--ink-soft);margin-top:6px;}
+  .filter-wrap{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#FFFDF8,#FBF6ED);}
+  .filter-label{font-size:10.5px;font-weight:700;color:var(--ink-faint);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;}
+  .filters{display:flex;flex-wrap:wrap;gap:7px;}
+  .filter-btn{font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:99px;cursor:pointer;border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft);font-family:var(--sans);transition:background .12s,color .12s,border-color .12s;-webkit-tap-highlight-color:transparent;}
+  .filter-btn:hover{border-color:var(--wine);color:var(--wine);}
+  .filter-btn.active{background:var(--wine);color:#FBF3E6;border-color:var(--wine);}
+  .cards{padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .card.hidden{display:none;}
+  .card-header{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);}
+  .card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .dot-whisky{background:#8B4513;}
+  .dot-tequila{background:#6B8E23;}
+  .dot-mezcal{background:#4A4A2A;}
+  .dot-vodka{background:#A8C4D4;border:1px solid var(--line-strong);}
+  .dot-gin{background:#4A7B6F;}
+  .card-title{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--wine);flex:1;}
+  .card-tag{font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--ink-soft);background:var(--page);flex-shrink:0;}
+  .card-body{padding:13px 16px;display:flex;flex-direction:column;gap:10px;}
+  .row{display:flex;gap:8px;align-items:flex-start;}
+  .row-label{font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);min-width:72px;padding-top:1px;flex-shrink:0;}
+  .row-val{font-size:13px;color:var(--ink);line-height:1.5;flex:1;}
+  .row-val strong{font-weight:600;color:var(--wine);}
+  .divider{height:1px;background:var(--line);margin:2px 0;}
+  .pills-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px;}
+  .style-pill{font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:99px;border:1px solid var(--wine);background:var(--wine-tint);color:var(--wine);cursor:pointer;transition:background .12s,color .12s;-webkit-tap-highlight-color:transparent;}
+  .style-pill:hover{background:var(--wine);color:#FBF3E6;}
+  .style-pill:active{transform:scale(0.96);}
+  .pairing-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px;}
+  .pairing-pill{font-size:11.5px;padding:4px 10px;border-radius:99px;border:1px solid var(--gold-light);background:var(--gold-light);color:#7a5a1a;font-weight:500;}
+  .style-drawer{display:none;margin-top:8px;background:#FDFAF4;border:1px solid var(--gold);border-radius:12px;overflow:hidden;}
+  .style-drawer.open{display:block;}
+  .drawer-header{background:var(--wine);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;}
+  .drawer-title{font-family:var(--serif);font-size:15px;color:#F0E8D8;}
+  .drawer-close{background:none;border:none;color:#c8a96e;font-size:20px;line-height:1;cursor:pointer;padding:0 2px;font-family:var(--sans);}
+  .drawer-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
+  .d-row{display:flex;gap:8px;align-items:flex-start;}
+  .d-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);min-width:64px;padding-top:1px;flex-shrink:0;}
+  .d-val{font-size:12.5px;color:var(--ink);line-height:1.5;flex:1;}
+  .d-val strong{font-weight:600;color:var(--wine);}
+  .d-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px;}
+  .d-pill{font-size:11px;padding:3px 9px;border-radius:99px;background:var(--gold-light);border:1px solid #e8d49a;color:#7a5a1a;font-weight:500;}
+  .d-cocktail{background:#E0EAF3;border:1px solid #b0c8e0;color:#0b2a47;}
+  .d-divider{height:1px;background:var(--line);}
+  footer{border-top:1px solid var(--line);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;}
+  footer span{font-size:11px;color:var(--ink-faint);}
+  footer a{font-size:11px;font-weight:600;color:var(--ink-soft);text-decoration:none;}
+  footer a:hover{color:var(--wine);}
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="masthead">
+    <div class="brand-row">
+      <div class="brand-mark"><span>EW</span></div>
+      <div>
+        <div class="brand-over">Everything Wine</div>
+        <div class="brand-sub">River District Vancouver</div>
+      </div>
+    </div>
+    <h1>Spirits Facts</h1>
+    <p class="tagline">Staff reference — tap any style for tasting notes & cocktails.</p>
+  </div>
+
+  <div class="filter-wrap">
+    <div class="filter-label">Filter by</div>
+    <div class="filters">
+      <button class="filter-btn active" onclick="filter('all')">All</button>
+      <button class="filter-btn" onclick="filter('whisky')">Whisky</button>
+      <button class="filter-btn" onclick="filter('tequila')">Tequila</button>
+      <button class="filter-btn" onclick="filter('mezcal')">Mezcal</button>
+      <button class="filter-btn" onclick="filter('vodka')">Vodka</button>
+      <button class="filter-btn" onclick="filter('gin')">Gin</button>
+    </div>
+  </div>
+
+  <div class="cards">
+
+    <!-- ══ SCOTCH WHISKY ══ -->
+    <div class="card" data-cat="whisky">
+      <div class="card-header"><span class="card-dot dot-whisky"></span><span class="card-title">Scotch Whisky</span><span class="card-tag">Whisky</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Styles</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('scotch-sm',this)">Single Malt</span>
+            <span class="style-pill" onclick="openDrawer('scotch-blend',this)">Blended Scotch</span>
+            <span class="style-pill" onclick="openDrawer('scotch-bm',this)">Blended Malt</span>
+            <span class="style-pill" onclick="openDrawer('scotch-grain',this)">Single Grain</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-scotch-sm">
+          <div class="drawer-header"><span class="drawer-title">Single Malt Scotch</span><button class="drawer-close" onclick="closeDrawer('scotch-sm')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">100% malted barley, single distillery, pot stills. Aged min 3 years in oak casks.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Regions</span><span class="d-val"><strong>Speyside</strong> — fruity, honeyed (Glenfiddich, Macallan). <strong>Islay</strong> — peaty, smoky, coastal (Lagavulin, Laphroaig). <strong>Highlands</strong> — diverse, heathery (Dalmore, Glenmorangie). <strong>Lowlands</strong> — light, floral (Auchentoshan).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Varies widely by region — fruit, honey, vanilla, peat, smoke, dried fruit, oak spice.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat or with a few drops of water. Glencairn glass. Room temp or slight chill.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Rob Roy</span><span class="d-pill d-cocktail">Blood & Sand</span><span class="d-pill d-cocktail">Penicillin</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-scotch-blend">
+          <div class="drawer-header"><span class="drawer-title">Blended Scotch</span><button class="drawer-close" onclick="closeDrawer('scotch-blend')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Blend of single malt + grain whiskies from multiple distilleries. Consistent, approachable.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Johnnie Walker, Chivas Regal, Dewar's, Ballantine's, Famous Grouse.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Light to medium body. Vanilla, caramel, dried fruit, light smoke. Easy-drinking.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on the rocks, or with water. Very mixable.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Scotch & Soda</span><span class="d-pill d-cocktail">Rusty Nail</span><span class="d-pill d-cocktail">Highball</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-scotch-bm">
+          <div class="drawer-header"><span class="drawer-title">Blended Malt Scotch</span><button class="drawer-close" onclick="closeDrawer('scotch-bm')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Blend of single malts from multiple distilleries. No grain whisky. More complex than blended.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Monkey Shoulder, Johnnie Walker Green Label, Compass Box.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Richer than blended Scotch. Fruity, malty, honeyed with regional character of constituent malts.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on the rocks, or in cocktails. Great value entry to malt whisky.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Whisky Sour</span><span class="d-pill d-cocktail">Rob Roy</span><span class="d-pill d-cocktail">Highball</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-scotch-grain">
+          <div class="drawer-header"><span class="drawer-title">Single Grain Scotch</span><button class="drawer-close" onclick="closeDrawer('scotch-grain')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Made from grains other than malted barley (wheat, corn) at a single distillery. Column still.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Haig Club, Girvan, Cameronbridge.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Lighter, sweeter than malt. Vanilla, toffee, coconut, light oak. Smooth and approachable.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on the rocks, or with a mixer. Often underrated.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Scotch & Ginger</span><span class="d-pill d-cocktail">Highball</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">Scotland. Must be aged min 3 years in oak. ABV min 40%.</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">Ranges from light & floral (Lowlands) to intensely peaty & smoky (Islay).</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">Smoked salmon</span><span class="pairing-pill">Aged cheddar</span><span class="pairing-pill">Dark chocolate</span><span class="pairing-pill">Shortbread</span></div></div>
+      </div>
+    </div>
+
+    <!-- ══ IRISH WHISKEY ══ -->
+    <div class="card" data-cat="whisky">
+      <div class="card-header"><span class="card-dot dot-whisky"></span><span class="card-title">Irish Whiskey</span><span class="card-tag">Whisky</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Styles</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('irish-sps',this)">Single Pot Still</span>
+            <span class="style-pill" onclick="openDrawer('irish-sm',this)">Single Malt</span>
+            <span class="style-pill" onclick="openDrawer('irish-blend',this)">Blended</span>
+            <span class="style-pill" onclick="openDrawer('irish-grain',this)">Single Grain</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-irish-sps">
+          <div class="drawer-header"><span class="drawer-title">Single Pot Still Irish</span><button class="drawer-close" onclick="closeDrawer('irish-sps')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Unique to Ireland. Mix of malted & unmalted barley in a pot still. Triple distilled.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Redbreast, Green Spot, Yellow Spot, Powers John's Lane, Midleton.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Creamy, spicy, oily mouthfeel. Green apple, toasted grain, vanilla, dried fruit, gentle spice.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat or with a small splash of water. Glencairn glass.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Irish Old Fashioned</span><span class="d-pill d-cocktail">Tipperary</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-irish-sm">
+          <div class="drawer-header"><span class="drawer-title">Irish Single Malt</span><button class="drawer-close" onclick="closeDrawer('irish-sm')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">100% malted barley, single distillery, pot stills. Triple distilled. No peat (usually).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Tyrconnell, Knappogue Castle, Bushmills 10yr, Teeling Single Malt.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Light, smooth, fruity. Honey, vanilla, orchard fruit, light oak. Gentle and approachable.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat or on the rocks. Very smooth, great for new whiskey drinkers.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Irish Coffee</span><span class="d-pill d-cocktail">Whiskey Sour</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-irish-blend">
+          <div class="drawer-header"><span class="drawer-title">Blended Irish Whiskey</span><button class="drawer-close" onclick="closeDrawer('irish-blend')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Blend of pot still, malt, and grain whiskies. Triple distilled. The most common style.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Jameson, Tullamore D.E.W., Powers, Paddy, Slane.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Light, smooth, easy-drinking. Vanilla, honey, light fruit, gentle spice. Very approachable.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on rocks, or with ginger ale. Classic mixer whiskey.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Irish Mule</span><span class="d-pill d-cocktail">Irish Coffee</span><span class="d-pill d-cocktail">Whiskey Sour</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-irish-grain">
+          <div class="drawer-header"><span class="drawer-title">Irish Single Grain</span><button class="drawer-close" onclick="closeDrawer('irish-grain')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Made from corn or wheat at a single distillery. Column still. Light and smooth.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Teeling Single Grain, Greenore, Kilbeggan Single Grain.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Very light, sweet, vanilla-forward. Coconut, butterscotch, light citrus. Easy sipping.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on the rocks or in cocktails.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Irish Highball</span><span class="d-pill d-cocktail">Whiskey Smash</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">Ireland. Triple distilled (usually). Aged min 3 years. Smooth & approachable.</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">Lighter and smoother than Scotch. Rarely peated. Honey, vanilla, orchard fruit.</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">Smoked salmon</span><span class="pairing-pill">Soda bread</span><span class="pairing-pill">Mild cheddar</span><span class="pairing-pill">Apple tart</span></div></div>
+      </div>
+    </div>
+
+    <!-- ══ BOURBON / AMERICAN WHISKEY ══ -->
+    <div class="card" data-cat="whisky">
+      <div class="card-header"><span class="card-dot dot-whisky"></span><span class="card-title">American Whiskey</span><span class="card-tag">Whisky</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Styles</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('bourbon',this)">Straight Bourbon</span>
+            <span class="style-pill" onclick="openDrawer('tennessee',this)">Tennessee</span>
+            <span class="style-pill" onclick="openDrawer('rye-us',this)">Rye Whiskey</span>
+            <span class="style-pill" onclick="openDrawer('wheat',this)">Wheat Whiskey</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-bourbon">
+          <div class="drawer-header"><span class="drawer-title">Straight Bourbon</span><button class="drawer-close" onclick="closeDrawer('bourbon')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Min 51% corn mash. New charred oak barrels only. Distilled to max 80% ABV. No age statement needed if 4+ years.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Buffalo Trace, Maker's Mark, Woodford Reserve, Wild Turkey, Four Roses, Knob Creek.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Sweet, full-bodied. Vanilla, caramel, corn sweetness, oak, cinnamon, dried fruit. Rich and warming.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on the rocks, or with a large ice cube. Rocks glass.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Old Fashioned</span><span class="d-pill d-cocktail">Manhattan</span><span class="d-pill d-cocktail">Mint Julep</span><span class="d-pill d-cocktail">Whiskey Sour</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-tennessee">
+          <div class="drawer-header"><span class="drawer-title">Tennessee Whiskey</span><button class="drawer-close" onclick="closeDrawer('tennessee')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Like bourbon but filtered through sugar maple charcoal before aging (Lincoln County Process). Smoother.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Jack Daniel's, George Dickel, Uncle Nearest.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Smoother than bourbon. Vanilla, caramel, maple, light smoke, banana, charcoal character.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on the rocks, or with cola. Very popular mixer.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Jack & Coke</span><span class="d-pill d-cocktail">Lynchburg Lemonade</span><span class="d-pill d-cocktail">Tennessee Mule</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-rye-us">
+          <div class="drawer-header"><span class="drawer-title">American Rye Whiskey</span><button class="drawer-close" onclick="closeDrawer('rye-us')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Min 51% rye mash. New charred oak barrels. Spicier and drier than bourbon.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Rittenhouse, Bulleit Rye, WhistlePig, Sazerac Rye, High West.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Dry, spicy, bold. Black pepper, caraway, dried fruit, vanilla, mint. Less sweet than bourbon.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat or in classic cocktails. The original Manhattan spirit.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Manhattan</span><span class="d-pill d-cocktail">Sazerac</span><span class="d-pill d-cocktail">Old Fashioned</span><span class="d-pill d-cocktail">Vieux Carré</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-wheat">
+          <div class="drawer-header"><span class="drawer-title">Wheat Whiskey</span><button class="drawer-close" onclick="closeDrawer('wheat')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Min 51% wheat mash. Softer and sweeter than corn or rye dominant whiskies.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Bernheim Original, Pappy Van Winkle (wheat-heavy bourbon), Maker's Mark (wheat in mash).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Soft, gentle, sweet. Honey, light vanilla, bread, mild fruit. Approachable and easy-drinking.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat or on the rocks. Great gateway whiskey.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Wheat Whiskey Sour</span><span class="d-pill d-cocktail">Old Fashioned</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">USA. Must be made in the US. Bourbon must use new charred oak — no age minimum for Bourbon.</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">Sweeter and more vanilla-forward than Scotch. Corn gives richness; rye gives spice.</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">BBQ ribs</span><span class="pairing-pill">Pecan pie</span><span class="pairing-pill">Aged gouda</span><span class="pairing-pill">Fried chicken</span></div></div>
+      </div>
+    </div>
+
+    <!-- ══ JAPANESE WHISKY ══ -->
+    <div class="card" data-cat="whisky">
+      <div class="card-header"><span class="card-dot dot-whisky"></span><span class="card-title">Japanese Whisky</span><span class="card-tag">Whisky</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Styles</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('jp-sm',this)">Single Malt</span>
+            <span class="style-pill" onclick="openDrawer('jp-blend',this)">Blended</span>
+            <span class="style-pill" onclick="openDrawer('jp-grain',this)">Grain</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-jp-sm">
+          <div class="drawer-header"><span class="drawer-title">Japanese Single Malt</span><button class="drawer-close" onclick="closeDrawer('jp-sm')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Inspired by Scotch methods. 100% malted barley, pot stills. Often uses Mizunara oak (Japanese oak) for unique flavour.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Yamazaki, Hakushu, Yoichi, Miyagikyo, Ichiro's Malt.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Elegant, refined, complex. Stone fruit, honey, sandalwood, incense (Mizunara), subtle smoke, floral.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat or Mizuwari (whisky + water + ice). Highball glass or Glencairn.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Japanese Highball</span><span class="d-pill d-cocktail">Mizuwari</span><span class="d-pill d-cocktail">Whisky Sour</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-jp-blend">
+          <div class="drawer-header"><span class="drawer-title">Japanese Blended Whisky</span><button class="drawer-close" onclick="closeDrawer('jp-blend')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Blend of malt and grain whiskies. Japanese distilleries often blend in-house unlike Scotch. Harmony is key.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Suntory Toki, Hibiki, Nikka From The Barrel, Kakubin, Nikka Days.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Balanced and harmonious. Floral, honey, light fruit, vanilla, gentle spice. Very approachable.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Japanese Highball — the definitive serve. 1:4 whisky to soda water over ice, stir gently.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Japanese Highball</span><span class="d-pill d-cocktail">Toki Soda</span><span class="d-pill d-cocktail">Whisky Smash</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-jp-grain">
+          <div class="drawer-header"><span class="drawer-title">Japanese Grain Whisky</span><button class="drawer-close" onclick="closeDrawer('jp-grain')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Made from corn or wheat in column stills. Lighter style used in blends or bottled solo.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Nikka Coffey Grain, Chita (Suntory).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Light, creamy, sweet. Vanilla, coconut, light tropical fruit. Very smooth and gentle.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, Highball, or Mizuwari.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Highball</span><span class="d-pill d-cocktail">Whisky Collins</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">Japan. Inspired by Scotch tradition. Known for precision, balance, and refined complexity.</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">Elegant and subtle. Floral, fruity, and delicate. Less smoky than Scotch. Often uses Mizunara oak.</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">Sushi</span><span class="pairing-pill">Yakitori</span><span class="pairing-pill">Dark chocolate</span><span class="pairing-pill">Mild cheese</span></div></div>
+      </div>
+    </div>
+
+    <!-- ══ CANADIAN WHISKY ══ -->
+    <div class="card" data-cat="whisky">
+      <div class="card-header"><span class="card-dot dot-whisky"></span><span class="card-title">Canadian Whisky</span><span class="card-tag">Whisky</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Styles</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('cdn-blend',this)">Canadian Blended</span>
+            <span class="style-pill" onclick="openDrawer('cdn-rye',this)">Canadian Rye</span>
+            <span class="style-pill" onclick="openDrawer('cdn-sm',this)">Single Malt</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-cdn-blend">
+          <div class="drawer-header"><span class="drawer-title">Canadian Blended Whisky</span><button class="drawer-close" onclick="closeDrawer('cdn-blend')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Blend of base grain whisky (corn, wheat) + flavouring whiskies (rye). Aged min 3 years. Very flexible regulations.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Crown Royal, Canadian Club, Seagram's VO, Black Velvet, Gibson's.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Light, smooth, easy-drinking. Vanilla, caramel, light rye spice, grain sweetness. Very approachable.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">On the rocks, with ginger ale or cola. Great mixer whisky.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Whisky & Ginger</span><span class="d-pill d-cocktail">Caesar</span><span class="d-pill d-cocktail">Manhattan</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-cdn-rye">
+          <div class="drawer-header"><span class="drawer-title">Canadian Rye Whisky</span><button class="drawer-close" onclick="closeDrawer('cdn-rye')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Historically rye-influenced but no legal minimum rye content required. "Rye" = Canadian whisky in local parlance.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">WhistlePig (VT/CA), Alberta Premium, Lot 40, Pike Creek, Gooderham & Worts.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Spicy, fruity, medium body. Rye bread, black pepper, dried fruit, light vanilla. More character than blended.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on the rocks, or in cocktails. Lot 40 is a local BC favourite.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Rye Manhattan</span><span class="d-pill d-cocktail">Old Fashioned</span><span class="d-pill d-cocktail">Whisky Sour</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-cdn-sm">
+          <div class="drawer-header"><span class="drawer-title">Canadian Single Malt</span><button class="drawer-close" onclick="closeDrawer('cdn-sm')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Emerging category. 100% malted barley, single distillery, pot stills. Inspired by Scotch, Canadian terroir.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Glen Breton (Cape Breton — Canada's first single malt), Shelter Point (BC), Okanagan Spirits.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Varies — typically light to medium, fruity, vanilla, light oak. BC expressions reflect local grain character.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat or with a few drops of water. Worth exploring — great local story for customers.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Whisky Sour</span><span class="d-pill d-cocktail">Highball</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">Canada. Aged min 3 years. Flexible regulations allow addition of other spirits & flavourings up to 9.09%.</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">Typically light, smooth, and approachable. Distilled spirit of Canada — "rye" is common slang for any Canadian whisky.</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">Poutine</span><span class="pairing-pill">Smoked meats</span><span class="pairing-pill">Maple-glazed salmon</span><span class="pairing-pill">Aged cheddar</span></div></div>
+      </div>
+    </div>
+
+    <!-- ══ TEQUILA ══ -->
+    <div class="card" data-cat="tequila">
+      <div class="card-header"><span class="card-dot dot-tequila"></span><span class="card-title">Tequila</span><span class="card-tag">Tequila</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Expressions</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('tq-blanco',this)">Blanco</span>
+            <span class="style-pill" onclick="openDrawer('tq-repo',this)">Reposado</span>
+            <span class="style-pill" onclick="openDrawer('tq-anejo',this)">Añejo</span>
+            <span class="style-pill" onclick="openDrawer('tq-extra',this)">Extra Añejo</span>
+            <span class="style-pill" onclick="openDrawer('tq-cristal',this)">Cristalino</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-tq-blanco">
+          <div class="drawer-header"><span class="drawer-title">Blanco Tequila</span><button class="drawer-close" onclick="closeDrawer('tq-blanco')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Aging</span><span class="d-val">Unaged or rested max 60 days in stainless steel. Purest expression of agave.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Colour</span><span class="d-val">Crystal clear.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Fresh, vibrant, peppery. Cooked agave, citrus, green herbs, white pepper, floral. Most agave-forward.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Patrón Silver, Espolòn Blanco, Casamigos Blanco, El Jimador, Olmeca Altos.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat (room temp), chilled, or in cocktails. Best for mixing.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Margarita</span><span class="d-pill d-cocktail">Paloma</span><span class="d-pill d-cocktail">Tequila Sunrise</span><span class="d-pill d-cocktail">Tommy's Margarita</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-tq-repo">
+          <div class="drawer-header"><span class="drawer-title">Reposado Tequila</span><button class="drawer-close" onclick="closeDrawer('tq-repo')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Aging</span><span class="d-val">2–12 months in oak barrels (often ex-bourbon or ex-wine). Balanced between agave and oak.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Colour</span><span class="d-val">Light gold / straw.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Agave + vanilla + light oak. Smoother than Blanco. Cooked agave, caramel, citrus, gentle spice.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Espolòn Reposado, Casamigos Reposado, Herradura, Jose Cuervo Tradicional.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on rocks, or in cocktails. Most versatile expression.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Margarita</span><span class="d-pill d-cocktail">Tequila Old Fashioned</span><span class="d-pill d-cocktail">Oaxacan Old Fashioned</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-tq-anejo">
+          <div class="drawer-header"><span class="drawer-title">Añejo Tequila</span><button class="drawer-close" onclick="closeDrawer('tq-anejo')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Aging</span><span class="d-val">1–3 years in small oak barrels (max 600L). Rich and complex.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Colour</span><span class="d-val">Amber / deep gold.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Rich, smooth, whisky-like. Vanilla, caramel, dried fruit, chocolate, oak, agave in the background.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Don Julio Añejo, Patrón Añejo, Clase Azul, 1800 Añejo.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat or on a large ice cube. Sipping tequila. Rocks glass.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Tequila Manhattan</span><span class="d-pill d-cocktail">Añejo Old Fashioned</span><span class="d-pill d-cocktail">Neat sipping</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-tq-extra">
+          <div class="drawer-header"><span class="drawer-title">Extra Añejo Tequila</span><button class="drawer-close" onclick="closeDrawer('tq-extra')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Aging</span><span class="d-val">3+ years in oak. Premium, slow-aged, very complex. Category created in 2006.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Colour</span><span class="d-val">Dark amber, mahogany.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Deep, rich, complex. Dark fruit, chocolate, coffee, leather, vanilla, oak. Minimal agave character remaining.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Don Julio 1942, Patrón Extra Añejo, Gran Patrón Burdeos, Fortaleza Still Strength.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Always neat. Sip slowly. Fine crystal glass. Treat like a premium whisky.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Neat sipping only</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-tq-cristal">
+          <div class="drawer-header"><span class="drawer-title">Cristalino Tequila</span><button class="drawer-close" onclick="closeDrawer('tq-cristal')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Añejo or Extra Añejo that has been charcoal-filtered to remove colour. Retains aged complexity but looks clear.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Colour</span><span class="d-val">Crystal clear despite being aged.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Smooth, complex, vanilla-forward. Oak character retained but lighter. Best of both worlds.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Don Julio 70, Casamigos Cristalino, Maestro Dobel Diamante.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on rocks, or in premium cocktails.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Cristalino Margarita</span><span class="d-pill d-cocktail">Espresso Martini twist</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">Jalisco, Mexico (+ 4 other states). Must be made from Blue Weber agave. Min 38% ABV.</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">Cooked agave (earthy, sweet, vegetal) + oak influence increases with aging. Blanco = freshest, Extra Añejo = richest.</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">Tacos</span><span class="pairing-pill">Ceviche</span><span class="pairing-pill">Guacamole</span><span class="pairing-pill">Grilled fish</span></div></div>
+      </div>
+    </div>
+
+    <!-- ══ MEZCAL ══ -->
+    <div class="card" data-cat="mezcal">
+      <div class="card-header"><span class="card-dot dot-mezcal"></span><span class="card-title">Mezcal</span><span class="card-tag">Mezcal</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Agave types</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('mz-espadin',this)">Espadín</span>
+            <span class="style-pill" onclick="openDrawer('mz-tobala',this)">Tobalá</span>
+            <span class="style-pill" onclick="openDrawer('mz-tepez',this)">Tepeztate</span>
+            <span class="style-pill" onclick="openDrawer('mz-cuishe',this)">Cuishe</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-mz-espadin">
+          <div class="drawer-header"><span class="drawer-title">Espadín Mezcal</span><button class="drawer-close" onclick="closeDrawer('mz-espadin')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Agave</span><span class="d-val">Agave angustifolia. Most common mezcal agave (~90% of production). Cultivated. Matures in 7–10 years.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Smoky, earthy, fruity. Roasted agave, citrus, green pepper, smoke, tropical fruit. Entry-level mezcal.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Del Maguey Vida, Banhez, Wahaka, El Silencio, Montelobos.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, room temp. Jícara (clay cup) or copita. Accompanied by orange slice + sal de gusano.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Mezcal Negroni</span><span class="d-pill d-cocktail">Mezcal Margarita</span><span class="d-pill d-cocktail">Oaxacan Old Fashioned</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-mz-tobala">
+          <div class="drawer-header"><span class="drawer-title">Tobalá Mezcal</span><button class="drawer-close" onclick="closeDrawer('mz-tobala')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Agave</span><span class="d-val">Agave potatorum. Wild agave. Grows in high-altitude forests. Matures in 12–15 years. Rare and prized.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Complex, floral, fruity. Tropical fruit, flowers, herbs, mineral, light smoke, honey. More delicate than Espadín.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Del Maguey Tobalá, Los Amantes, Wahaka, Vago.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Always neat. Sip slowly and appreciate the complexity. Expensive — treat it accordingly.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Neat only recommended</span><span class="d-pill d-cocktail">Simple Highball</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-mz-tepez">
+          <div class="drawer-header"><span class="drawer-title">Tepeztate Mezcal</span><button class="drawer-close" onclick="closeDrawer('mz-tepez')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Agave</span><span class="d-val">Agave marmorata. Wild, grows on rocky cliffs. Matures 25–35 years. One of the rarest mezcals.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Wild, funky, herbal, vegetal. Green herbs, fermented fruit, anise, earth, smoke. Challenging and unique.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Vago Tepeztate, Rey Campero, El Jolgorio.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat only. For the adventurous customer who appreciates wild spirits.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Neat only</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-mz-cuishe">
+          <div class="drawer-header"><span class="drawer-title">Cuishe Mezcal</span><button class="drawer-close" onclick="closeDrawer('mz-cuishe')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Agave</span><span class="d-val">Agave karwinskii (various sub-types). Semi-wild. Matures 10–20 years. Long, narrow piña.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Earthy, savoury, minerally. Dried herbs, roasted nuts, earth, light smoke, tropical undertones. Structured.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Vago Cuishe, El Jolgorio Cuishe, Koch El Mezcal.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, room temp. Great for customers curious about non-Espadín mezcals.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Mezcal Negroni</span><span class="d-pill d-cocktail">Mezcal Sour</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">Oaxaca (primarily) + 8 other Mexican states. Can be made from 40+ agave varieties. Ancestral traditions.</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">All mezcal is smoky — agave hearts (piñas) are roasted in earthen pits. "For everything bad, mezcal; for everything good, also mezcal."</span></div>
+        <div class="row"><span class="row-label">Tequila vs Mezcal</span><span class="row-val">All tequila is mezcal — but not all mezcal is tequila. Tequila = only Blue Weber agave, specific region. Mezcal = many agave varieties, artisanal production, smoky.</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">Mole</span><span class="pairing-pill">Grilled meats</span><span class="pairing-pill">Dark chocolate</span><span class="pairing-pill">Charcuterie</span></div></div>
+      </div>
+    </div>
+
+    <!-- ══ VODKA ══ -->
+    <div class="card" data-cat="vodka">
+      <div class="card-header"><span class="card-dot dot-vodka"></span><span class="card-title">Vodka</span><span class="card-tag">Vodka</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Base</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('vk-grain',this)">Grain</span>
+            <span class="style-pill" onclick="openDrawer('vk-potato',this)">Potato</span>
+            <span class="style-pill" onclick="openDrawer('vk-grape',this)">Grape</span>
+            <span class="style-pill" onclick="openDrawer('vk-rye',this)">Rye</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-vk-grain">
+          <div class="drawer-header"><span class="drawer-title">Grain Vodka</span><button class="drawer-close" onclick="closeDrawer('vk-grain')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Base</span><span class="d-val">Wheat or corn. Most common style globally. Clean, neutral, very versatile.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Clean, crisp, slightly sweet. Very neutral. Light citrus, faint grain, smooth finish.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Grey Goose (France, wheat), Absolut (Sweden, wheat), Ketel One (Netherlands, wheat), Tito's (US, corn).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Chilled neat, on rocks, or in cocktails. The go-to mixer vodka.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Vodka Martini</span><span class="d-pill d-cocktail">Moscow Mule</span><span class="d-pill d-cocktail">Cosmopolitan</span><span class="d-pill d-cocktail">Vodka Soda</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-vk-potato">
+          <div class="drawer-header"><span class="drawer-title">Potato Vodka</span><button class="drawer-close" onclick="closeDrawer('vk-potato')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Base</span><span class="d-val">Potato. Traditional Polish/Russian style. Fuller-bodied, creamier texture than grain vodka.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Rich, creamy, slightly earthy. More body and texture than grain. Subtle sweetness, fuller mouthfeel.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Luksusowa (Poland), Chopin Potato (Poland), Woody Creek (US), Chase (UK).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Chilled neat — the texture shines. Also great in Martinis.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Dirty Martini</span><span class="d-pill d-cocktail">Vodka Martini</span><span class="d-pill d-cocktail">Bloody Mary</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-vk-grape">
+          <div class="drawer-header"><span class="drawer-title">Grape Vodka</span><button class="drawer-close" onclick="closeDrawer('vk-grape')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Base</span><span class="d-val">Grapes or wine. Smooth and silky. Popular premium / luxury vodka style.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Soft, silky, subtly floral. Light fruit, gentle sweetness, very smooth. Almost wine-like finish.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Cîroc (France, snap frost grapes), Guillotine (France), Hangar 1 (US).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Chilled neat or in elegant cocktails. Premium sipping vodka.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Vodka Martini</span><span class="d-pill d-cocktail">French Martini</span><span class="d-pill d-cocktail">Cosmopolitan</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-vk-rye">
+          <div class="drawer-header"><span class="drawer-title">Rye Vodka</span><button class="drawer-close" onclick="closeDrawer('vk-rye')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Base</span><span class="d-val">Rye grain. Traditional Eastern European style. More character and spice than wheat vodka.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Slightly spicy, dry, bold. Pepper, grain, light anise, clean finish. More personality than grain vodka.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Belvedere (Poland, rye), Wyborowa (Poland, rye), Chopin Rye, Żubrówka (bison grass rye).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Chilled neat, on ice, or in cocktails. Pairs well with bold mixers.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Moscow Mule</span><span class="d-pill d-cocktail">Vodka Martini</span><span class="d-pill d-cocktail">Żubrówka & Apple Juice</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">Russia, Poland, Sweden, France, US and more. Neutral spirit — 40%+ ABV. Defined by what it lacks.</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">Grain = clean & neutral. Potato = creamy & full. Grape = silky & soft. Rye = spicy & bold.</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">Caviar</span><span class="pairing-pill">Smoked fish</span><span class="pairing-pill">Pickles</span><span class="pairing-pill">Blinis</span></div></div>
+      </div>
+    </div>
+
+    <!-- ══ GIN ══ -->
+    <div class="card" data-cat="gin">
+      <div class="card-header"><span class="card-dot dot-gin"></span><span class="card-title">Gin</span><span class="card-tag">Gin</span></div>
+      <div class="card-body">
+        <div class="row"><span class="row-label">Styles</span>
+          <div class="pills-row">
+            <span class="style-pill" onclick="openDrawer('gin-ld',this)">London Dry</span>
+            <span class="style-pill" onclick="openDrawer('gin-contemp',this)">Contemporary</span>
+            <span class="style-pill" onclick="openDrawer('gin-oldtom',this)">Old Tom</span>
+            <span class="style-pill" onclick="openDrawer('gin-navy',this)">Navy Strength</span>
+            <span class="style-pill" onclick="openDrawer('gin-sloe',this)">Sloe Gin</span>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-gin-ld">
+          <div class="drawer-header"><span class="drawer-title">London Dry Gin</span><button class="drawer-close" onclick="closeDrawer('gin-ld')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Juniper-forward. All botanicals distilled together. No artificial flavours added. Dry style. Can be made anywhere.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Botanicals</span><span class="d-val">Juniper (must be dominant), coriander seed, angelica root, citrus peel, cassia bark, and others.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Crisp, dry, juniper-led. Pine, citrus, spice, earthy herbal notes. Clean and classic.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Tanqueray, Beefeater, Bombay Sapphire, Gordon's, Sipsmith.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">G&T with good tonic and a lime wedge. Or straight up in a Martini.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Gin & Tonic</span><span class="d-pill d-cocktail">Martini</span><span class="d-pill d-cocktail">Negroni</span><span class="d-pill d-cocktail">Tom Collins</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-gin-contemp">
+          <div class="drawer-header"><span class="drawer-title">Contemporary / New Western Gin</span><button class="drawer-close" onclick="closeDrawer('gin-contemp')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Juniper present but not necessarily dominant. Focus on other botanicals — floral, citrus, herbal, fruit. No rules on style.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Botanicals</span><span class="d-val">Highly variable. Cucumber, rose, elderflower, citrus, local herbs, berries, tea, lavender, and more.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Varies widely. Can be floral, fruity, savoury, citrus-forward. More approachable for non-gin drinkers.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Hendrick's (cucumber, rose), Aviation (lavender, cardamom), Monkey 47, The Botanist (Islay), Empress 1908 (BC, butterfly pea).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">G&T with premium tonic, garnish matched to botanicals. Hendrick's = cucumber. Empress = lemon (colour change!).</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Floral G&T</span><span class="d-pill d-cocktail">Gin Fizz</span><span class="d-pill d-cocktail">Gimlet</span><span class="d-pill d-cocktail">Gin Sour</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-gin-oldtom">
+          <div class="drawer-header"><span class="drawer-title">Old Tom Gin</span><button class="drawer-close" onclick="closeDrawer('gin-oldtom')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Sweetened gin — between London Dry and Genever. Historic style, 18th century London. Slight sweetness added.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Juniper-forward with a touch of sweetness. Softer than London Dry. Herbal, lightly sweet, approachable.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Hayman's Old Tom, Ransom Old Tom, Jensen's Old Tom.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">G&T, or in classic pre-Prohibition cocktails where it was the original spirit.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Tom Collins (original)</span><span class="d-pill d-cocktail">Martinez</span><span class="d-pill d-cocktail">Ramos Gin Fizz</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-gin-navy">
+          <div class="drawer-header"><span class="drawer-title">Navy Strength Gin</span><button class="drawer-close" onclick="closeDrawer('gin-navy')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Min 57% ABV. Historically supplied to Royal Navy — high proof so if spilled on gunpowder, it would still ignite.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Intense, punchy, bold. All botanical flavours amplified. More juniper, more spice, more everything.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Plymouth Navy Strength, Sipsmith V.J.O.P., Perry's Tot, Hayman's Royal Dock.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">G&T (the higher ABV still works beautifully with tonic), or in bold cocktails.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Navy Strength G&T</span><span class="d-pill d-cocktail">Bold Negroni</span><span class="d-pill d-cocktail">Navy Martini</span></div></div>
+          </div>
+        </div>
+        <div class="style-drawer" id="drawer-gin-sloe">
+          <div class="drawer-header"><span class="drawer-title">Sloe Gin</span><button class="drawer-close" onclick="closeDrawer('gin-sloe')">×</button></div>
+          <div class="drawer-body">
+            <div class="d-row"><span class="d-label">Production</span><span class="d-val">Gin liqueur (not technically gin). Sloe berries (blackthorn) macerated in gin with sugar. Rich and fruity. Min 25% ABV.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Tasting</span><span class="d-val">Sweet, fruity, tart. Plum, cherry, almond, dark berries, hint of juniper underneath. Rich and warming.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Key brands</span><span class="d-val">Sipsmith Sloe Gin, Plymouth Sloe Gin, Gordon's Sloe Gin, Hayman's Sloe Gin.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Serve</span><span class="d-val">Neat, on rocks, with tonic or lemonade. Autumn/winter drink. Also great in cocktails.</span></div>
+            <div class="d-divider"></div>
+            <div class="d-row"><span class="d-label">Cocktails</span><div class="d-pills"><span class="d-pill d-cocktail">Sloe Gin Fizz</span><span class="d-pill d-cocktail">Singapore Sling</span><span class="d-pill d-cocktail">Sloe Gin & Tonic</span></div></div>
+          </div>
+        </div>
+        <div class="row"><span class="row-label">Origin</span><span class="row-val">Global. Must contain juniper as primary botanical. Base spirit redistilled with botanicals. Min 37.5% ABV (EU).</span></div>
+        <div class="row"><span class="row-label">Key notes</span><span class="row-val">Juniper is the soul of gin. London Dry = classic & dry. Contemporary = modern & creative. Old Tom = historical & slightly sweet. Navy = bold & high-proof.</span></div>
+        <div class="divider"></div>
+        <div class="row"><span class="row-label">Pairs with</span><div class="pairing-row"><span class="pairing-pill">Smoked salmon</span><span class="pairing-pill">Cucumber sandwiches</span><span class="pairing-pill">Oysters</span><span class="pairing-pill">Soft cheese</span></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>Spirits reference · Internal use</span>
+    <a href="https://www.everythingwine.ca" target="_blank">everythingwine.ca ↗</a>
+  </footer>
+
+</div>
+
+<script>
+  function filter(cat) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.card').forEach(card => {
+      card.classList.toggle('hidden', cat !== 'all' && card.dataset.cat !== cat);
+    });
+    document.querySelectorAll('.style-drawer').forEach(d => d.classList.remove('open'));
+  }
+
+  function openDrawer(id, pill) {
+    const drawer = document.getElementById('drawer-' + id);
+    if (!drawer) return;
+    const isOpen = drawer.classList.contains('open');
+    document.querySelectorAll('.style-drawer').forEach(d => d.classList.remove('open'));
+    if (!isOpen) {
+      drawer.classList.add('open');
+      setTimeout(() => drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  }
+
+  function closeDrawer(id) {
+    const drawer = document.getElementById('drawer-' + id);
+    if (drawer) drawer.classList.remove('open');
+  }
+</script>
+</body>
+</html>
